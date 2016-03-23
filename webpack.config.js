@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 require('babel-polyfill');
 
 module.exports = {
@@ -22,7 +23,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
       }
     ]
   },
@@ -31,6 +32,7 @@ module.exports = {
       /languages\/(?!bash|cpp|css|html|javascript|lua|php|twig|xml)/,
       __dirname + '/nolang.js'
     ),
-    new webpack.optimize.UglifyJsPlugin({})
+    new webpack.optimize.UglifyJsPlugin({}),
+    new ExtractTextPlugin('bundle.css')
   ]
 };

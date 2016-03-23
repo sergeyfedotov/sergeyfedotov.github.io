@@ -17,4 +17,5 @@ const md = new MarkdownIT({
 
 domready(() => {
   document.body.innerHTML = md.render(document.body.textContent);
+  document.body.style.whiteSpace = 'normal';
 });
