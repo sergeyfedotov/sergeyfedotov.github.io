@@ -12,10 +12,32 @@ const md = new MarkdownIT({
     }
     return '';
   },
+  html: true,
   xhtmlOut: true
 });
 
 domready(() => {
-  document.body.innerHTML = md.render(document.body.textContent);
-  document.body.style.whiteSpace = 'normal';
+  const write = (content) => {
+    document.body.innerHTML = content;
+    document.body.style.whiteSpace = 'normal';
+  };
+  const stored = window.localStorage.getItem(window.location.pathname);
+
+  if (null !== stored) {
+    try {
+      const page = JSON.parse(stored);
+
+      if (page.lastModified === document.lastModified) {
+        return write(page.content);
+      }
+    } catch (__) {}
+  }
+
+  const page = {
+    lastModified: document.lastModified,
+    content: md.render(document.body.textContent)
+  };
+  window.localStorage.setItem(window.location.pathname, JSON.stringify(page));
+
+  return write(page.content);
 });
