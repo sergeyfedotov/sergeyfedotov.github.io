@@ -35,7 +35,7 @@ domready(() => {
 
   const page = {
     lastModified: document.lastModified,
-    content: md.render(document.body.textContent)
+    content: md.render(document.body.innerHTML.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1'))
   };
   window.localStorage.setItem(window.location.pathname, JSON.stringify(page));
 
