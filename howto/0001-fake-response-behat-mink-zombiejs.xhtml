@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8"/>
+  <title>Как подделать ответ на запрос ресурса с удалённого сервера в Behat и Mink + zombie.js</title>
+  <script src="/bundle.js"></script>
+  <link rel="stylesheet" href="/bundle.css"/>
+</head>
+<body><![CDATA[
+```
+> sudo npm install -g nock 
+```
+```yaml
+# behat.yml
+default:
+  extensions:
+    Behat\MinkExtension:
+      sessions:
+        default:
+          zombie:
+            node_modules_path: /usr/local/lib/node_modules/
+# ...
+```
+```php
+class FeatureContext extends MinkContext
+{
+    /**
+     * @BeforeScenario
+     */
+    public function beforeScenario(BeforeScenarioScope $scope)
+    {
+        /** @var ZombieDriver $driver */
+        $driver = $this->getMink()->getSession('default')->getDriver();
+        $driver->getServer()->evalJS(<<<'JS'
+            var nock = require('nock');
+            nock('http://api-maps.yandex.ru')
+                .get('/2.1/')
+                .times(Math.Infinity)
+                .reply(200, '{}');
+JS
+        );
+    }
+
+    // ...
+}
+```
+]]></body>
+</html>
